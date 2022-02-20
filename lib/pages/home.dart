@@ -2,6 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_yemeksepeti_ui/widgets/favorilerim.dart';
+import 'package:flutter_yemeksepeti_ui/widgets/onceki_sipari%C5%9Fler.dart';
+
+import '../widgets/cuzdan.dart';
+import '../widgets/ozel_menuler.dart';
+import '../widgets/super_restoranlar.dart';
+import '../widgets/yeni_eklenen_retoranlar.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -24,6 +31,7 @@ class _HomePageState extends State<HomePage> {
     'https://cdn.yemeksepeti.com/adm/Web-7ozrdf.jpg'
   ];
   int _currentPage = 0;
+  int _selectedIndex = 0;
   late Timer _timer;
   PageController _pageController = PageController(
     initialPage: 0,
@@ -52,6 +60,12 @@ class _HomePageState extends State<HomePage> {
     _timer.cancel();
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -65,56 +79,129 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: const AppBarButton(),
       ),
-      body: Column(
-        children: [
-          hesapSahibiBilgi(width: width, heigh: heigh),
-          vodColKampanya(width: width, heigh: heigh),
-          pageView(width: width, heigh: heigh),
-          SizedBox(
-            height: heigh / 120,
+      bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: true,
+        unselectedItemColor: Colors.grey,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.food_bank_outlined,
+            ),
+            label: 'Sipariş',
           ),
-          adres(width: width, heigh: heigh),
-          SizedBox(
-            height: heigh / 35,
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Ara',
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              /* SizedBox(
-                width: width / 25,
-              ), */
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Önceki Siparişlerim',
-                    style: TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.w900),
-                  ),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.message_rounded,
-                        size: 20,
-                      ),
-                      SizedBox(
-                        width: width / 100,
-                      ),
-                      Text('1 adet değerlendirilmemiş siparişiniz var!')
-                    ],
-                  )
-                ],
-              ),
-              const Icon(
-                Icons.arrow_forward_ios,
-                size: 15,
-              ),
-              /* SizedBox(
-                width: width / 25,
-              ), */
-            ],
-          )
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_basket_outlined),
+            label: 'Sepetim',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: 'Canlı Yardım',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu),
+            label: 'Diğer',
+          ),
         ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            hesapSahibiBilgi(width: width, heigh: heigh),
+            vodColKampanya(width: width, heigh: heigh),
+            pageView(width: width, heigh: heigh),
+            SizedBox(
+              height: heigh / 120,
+            ),
+            adres(width: width, heigh: heigh),
+            SizedBox(
+              height: heigh / 35,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Önceki Siparişlerim',
+                      style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.w900),
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.message_rounded,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: width / 100,
+                        ),
+                        const Text('1 adet değerlendirilmemiş siparişiniz var!')
+                      ],
+                    )
+                  ],
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 15,
+                ),
+              ],
+            ),
+            SizedBox(height: heigh / 50),
+            const OncekiSiparisler(),
+            const Padding(
+              padding: EdgeInsets.only(top: 12, left: 20, bottom: 10),
+              child: Text(
+                'Favorilerim',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.w900),
+              ),
+            ),
+            const Favorilerim(),
+            const Padding(
+              padding: EdgeInsets.only(top: 12, left: 20, bottom: 10),
+              child: Text(
+                'Özel Menüler',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.w900),
+              ),
+            ),
+            const OzelMenuler(),
+            SizedBox(
+              height: heigh / 70,
+            ),
+            const Cuzdan(),
+            const Padding(
+              padding: EdgeInsets.only(top: 12, left: 20, bottom: 10),
+              child: Text(
+                'Süper Restoranlar',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.w900),
+              ),
+            ),
+            const SuperRestoranlar(),
+            const Padding(
+              padding: EdgeInsets.only(top: 12, left: 20, bottom: 10),
+              child: Text(
+                'Yeni Eklenen Restoranlar',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.w900),
+              ),
+            ),
+            const YeniEklenenRestoranlar(),
+            SizedBox(
+              height: heigh / 70,
+            )
+          ],
+        ),
       ),
     );
   }
